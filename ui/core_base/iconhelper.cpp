@@ -64,12 +64,12 @@ IconHelper *IconHelper::getIconHelper(int icon)
     //由于部分值范围冲突所以可以指定索引来取
     //fontawesome   0xf000-0xf2e0
     //fontawesome6  0xe000-0xe33d 0xf000-0xf8ff
-    //iconfont      0xe501-0xe793 0xe8d5-0xea5d
+    //iconfont      0xe501-0xe793 0xe8d5-0xea5d 0xeb00-0xec00
     //weather       0xe900-0xe9cf
 
     IconHelper *iconHelper = iconFontAwesome;
     if (iconFontIndex < 0) {
-        if ((icon > 0xe501 && icon < 0xe793) || (icon > 0xe8d5 && icon < 0xea5d)) {
+        if ((icon >= 0xe501 && icon <= 0xe793) || (icon >= 0xe8d5 && icon <= 0xea5d) || (icon >= 0xeb00 && icon <= 0xec00)) {
             iconHelper = iconFontAliBaBa;
         }
     } else if (iconFontIndex == 0) {
@@ -136,7 +136,7 @@ IconHelper::IconHelper(const QString &fontFile, const QString &fontName, QObject
     if (!fontDb.families().contains(fontName) && QFile(fontFile).exists()) {
         int fontId = fontDb.addApplicationFont(fontFile);
         QStringList listName = fontDb.applicationFontFamilies(fontId);
-        if (listName.count() == 0) {
+        if (listName.size() == 0) {
             qDebug() << QString("load %1 error").arg(fontName);
         }
     }
@@ -265,8 +265,8 @@ void IconHelper::setStyle1(QWidget *widget, QList<QToolButton *> btns, QList<int
 
 void IconHelper::setStyle1(QWidget *widget, QList<QAbstractButton *> btns, QList<int> icons, const IconHelper::StyleColor &styleColor)
 {
-    int btnCount = btns.count();
-    int iconCount = icons.count();
+    int btnCount = btns.size();
+    int iconCount = icons.size();
     if (btnCount <= 0 || iconCount <= 0 || btnCount != iconCount) {
         return;
     }
@@ -329,7 +329,7 @@ void IconHelper::setStyle1(QWidget *widget, QList<QAbstractButton *> btns, QList
 
     //可能会重复调用设置所以先要移除上一次的
     for (int i = 0; i < btnCount; ++i) {
-        for (int j = 0; j < this->btns.count(); j++) {
+        for (int j = 0; j < this->btns.size(); j++) {
             if (this->btns.at(j) == btns.at(i)) {
                 disconnect(btns.at(i), SIGNAL(toggled(bool)), this, SLOT(toggled(bool)));
                 this->btns.at(j)->removeEventFilter(this);
