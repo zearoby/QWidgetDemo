@@ -3,14 +3,16 @@
 #include "frmframelesswidget.h"
 #include <QApplication>
 #include <QTextCodec>
+#include <QDebug>
 
 int main(int argc, char *argv[])
 {
 #if (QT_VERSION >= QT_VERSION_CHECK(5,0,0))
-    QApplication::setAttribute(Qt::AA_Use96Dpi);
+    //QApplication::setAttribute(Qt::AA_Use96Dpi);
+    QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 #endif
-#if (QT_VERSION >= QT_VERSION_CHECK(6,0,0))
-    QGuiApplication::setHighDpiScaleFactorRoundingPolicy(Qt::HighDpiScaleFactorRoundingPolicy::Floor);
+#if (QT_VERSION >= QT_VERSION_CHECK(5,14,0))
+    QGuiApplication::setHighDpiScaleFactorRoundingPolicy(Qt::HighDpiScaleFactorRoundingPolicy::PassThrough);
 #endif
 
     QApplication a(argc, argv);

@@ -19,8 +19,13 @@
 
 #include <QWidget>
 #include <QDateTime>
-
 class QTimer;
+
+#if (QT_VERSION >= QT_VERSION_CHECK(6,0,0))
+#define EnterEvent QEnterEvent
+#else
+#define EnterEvent QEvent
+#endif
 
 #ifdef quc
 class Q_DECL_EXPORT VideoWindow : public QWidget
@@ -89,11 +94,7 @@ public:
 
 protected:
     void resizeEvent(QResizeEvent *);
-#if (QT_VERSION >= QT_VERSION_CHECK(6,0,0))
-    void enterEvent(QEnterEvent *);
-#else
-    void enterEvent(QEvent *);
-#endif
+    void enterEvent(EnterEvent *);
     void leaveEvent(QEvent *);
     void dropEvent(QDropEvent *event);
     void dragEnterEvent(QDragEnterEvent *event);
@@ -219,7 +220,7 @@ private slots:
     //处理按钮单击
     void btnClicked();
 
-signals:
+Q_SIGNALS:
     //播放成功
     void receivePlayStart();
     //播放失败
@@ -241,7 +242,7 @@ signals:
     //工具栏单击
     void btnClicked(const QString &objName);
 
-public slots:
+public Q_SLOTS:
     //获取长度
     uint getLength();
     //获取当前播放位置

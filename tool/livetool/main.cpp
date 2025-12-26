@@ -25,6 +25,9 @@ int main(int argc, char *argv[])
     QTextCodec::setCodecForLocale(codec);
 #endif
 
+    App::ConfigFile = qApp->applicationDirPath() + "/livetool.ini";
+    App::readConfig();
+
     frmMain w;
     w.setWindowTitle("程序启动器 (QQ: 517216493 WX: feiyangqingyun)");
     w.setFixedSize(w.sizeHint());
@@ -35,9 +38,6 @@ int main(int argc, char *argv[])
     TrayIcon::Instance()->setToolTip(w.windowTitle());
     TrayIcon::Instance()->setVisible(true);
     QObject::connect(&w, SIGNAL(destroyed(QObject *)), TrayIcon::Instance(), SLOT(closeAll()));
-
-    App::ConfigFile = qApp->applicationDirPath() + "/config.ini";
-    App::readConfig();
     App::TargetAppName.isEmpty() ? w.show() : w.hide();
 
     return a.exec();

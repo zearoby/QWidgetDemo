@@ -67,7 +67,7 @@ void FramelessDialog::doWindowStateChange(QEvent *event)
     }
 
     //发出最大化最小化等改变事件,以便界面上更改对应的信息比如右上角图标和文字
-    emit windowStateChange(!moveEnable);
+    Q_EMIT windowStateChange(!moveEnable);
 
     //解决mac系统上无边框最小化失效的bug
 #ifdef Q_OS_MACOS
@@ -89,7 +89,8 @@ void FramelessDialog::doResizeEvent(QEvent *event)
     //非win系统的无边框拉伸,win系统上已经采用了nativeEvent来处理拉伸
     //为何不统一用计算的方式因为在win上用这个方式往左拉伸会发抖妹的
 #ifndef Q_OS_WIN
-    if (event->type() == QEvent::Resize) {
+    int type = event->type();
+    if (type == QEvent::Resize) {
         //重新计算八个描点的区域,描点区域的作用还有就是计算鼠标坐标是否在某一个区域内
         int width = this->width();
         int height = this->height();
@@ -111,7 +112,7 @@ void FramelessDialog::doResizeEvent(QEvent *event)
         pressedRect[6] = QRect(0, height - padding, padding, padding);
         //右下角描点区域
         pressedRect[7] = QRect(width - padding, height - padding, padding, padding);
-    } else if (event->type() == QEvent::HoverMove) {
+    } else if (type == QEvent::HoverMove) {
         //设置对应鼠标形状,这个必须放在这里而不是下面,因为可以在鼠标没有按下的时候识别
         QHoverEvent *hoverEvent = (QHoverEvent *)event;
         QPoint point = hoverEvent->pos();
@@ -196,7 +197,7 @@ void FramelessDialog::doResizeEvent(QEvent *event)
                 this->setGeometry(this->x(), this->y(), resizeW, resizeH);
             }
         }
-    } else if (event->type() == QEvent::MouseButtonPress) {
+    } else if (type == QEvent::MouseButtonPress) {
         //记住鼠标按下的坐标+窗体区域
         QMouseEvent *mouseEvent = (QMouseEvent *)event;
         mousePoint = mouseEvent->pos();
@@ -222,9 +223,9 @@ void FramelessDialog::doResizeEvent(QEvent *event)
         } else {
             mousePressed = true;
         }
-    } else if (event->type() == QEvent::MouseMove) {
+    } else if (type == QEvent::MouseMove) {
         //改成用HoverMove识别
-    } else if (event->type() == QEvent::MouseButtonRelease) {
+    } else if (type == QEvent::MouseButtonRelease) {
         //恢复所有
         this->setCursor(Qt::ArrowCursor);
         mousePressed = false;
@@ -237,8 +238,9 @@ void FramelessDialog::doResizeEvent(QEvent *event)
 
 bool FramelessDialog::eventFilter(QObject *watched, QEvent *event)
 {
+    int type = event->type();
     if (watched == this) {
-        if (event->type() == QEvent::WindowStateChange) {
+        if (type == QEvent::WindowStateChange) {
             doWindowStateChange(event);
         } else {
             doResizeEvent(event);
@@ -247,10 +249,10 @@ bool FramelessDialog::eventFilter(QObject *watched, QEvent *event)
         //双击标题栏发出双击信号给主界面
         //下面的 *result = HTCAPTION; 标志位也会自动识别双击标题栏
 #ifndef Q_OS_WIN
-        if (event->type() == QEvent::MouseButtonDblClick) {
-            emit titleDblClick();
-        } else if (event->type() == QEvent::NonClientAreaMouseButtonDblClick) {
-            emit titleDblClick();
+        if (type == QEvent::MouseButtonDblClick) {
+            Q_EMIT titleDblClick();
+        } else if (type == QEvent::NonClientAreaMouseButtonDblClick) {
+            Q_EMIT titleDblClick();
         }
 #endif
     }
@@ -281,8 +283,12 @@ bool FramelessDialog::nativeEvent(const QByteArray &eventType, void *message, lo
             //计算鼠标对应的屏幕坐标
             //这里最开始用的 LOWORD HIWORD 在多屏幕的时候会有问题
             //官方说明在这里 https://docs.microsoft.com/zh-cn/windows/win32/inputdev/wm-nchittest
-            long x = GET_X_LPARAM(msg->lParam);
-            long y = GET_Y_LPARAM(msg->lParam);
+            qreal ratio = 1.0;
+#if (QT_VERSION >= QT_VERSION_CHECK(5,0,0))
+            ratio = this->devicePixelRatioF();
+#endif
+            long x = GET_X_LPARAM(msg->lParam) / ratio;
+            long y = GET_Y_LPARAM(msg->lParam) / ratio;
             QPoint pos = mapFromGlobal(QPoint(x, y));
 
             //判断当前鼠标位置在哪个区域

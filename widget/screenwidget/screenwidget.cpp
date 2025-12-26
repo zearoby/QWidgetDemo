@@ -184,32 +184,43 @@ ScreenWidget::ScreenWidget(QWidget *parent) : QWidget(parent)
     fullScreen = new QPixmap();
 }
 
-void ScreenWidget::paintEvent(QPaintEvent *)
+QPixmap ScreenWidget::getSelectPixmap(int *rectX, int *rectY, int *rectW, int *rectH, int *pixX, int *pixY)
 {
     int x = screen->getLeftUp().x();
     int y = screen->getLeftUp().y();
     int w = screen->getRightDown().x() - x;
     int h = screen->getRightDown().y() - y;
 
-    QPainter painter(this);
+    qreal dpi = 1.0;
+#if (QT_VERSION >= QT_VERSION_CHECK(5,0,0))
+    dpi = this->devicePixelRatioF();
+#endif
 
-    QPen pen;
-    pen.setColor(Qt::green);
-    pen.setWidth(2);
-    pen.setStyle(Qt::DotLine);
-    painter.setPen(pen);
-    painter.drawPixmap(0, 0, *bgScreen);
+    int x2 = x * dpi;
+    int y2 = y * dpi;
+    int w2 = w * dpi;
+    int h2 = h * dpi;
 
-    if (w != 0 && h != 0) {
-        painter.drawPixmap(x, y, fullScreen->copy(x, y, w, h));
+    if (rectX) {
+        (*rectX) = x;
+    }
+    if (rectY) {
+        (*rectY) = y;
+    }
+    if (rectW) {
+        (*rectW) = w;
+    }
+    if (rectH) {
+        (*rectH) = h;
+    }
+    if (pixX) {
+        (*pixX) = x2;
+    }
+    if (pixY) {
+        (*pixY) = y2;
     }
 
-    painter.drawRect(x, y, w, h);
-
-    pen.setColor(Qt::yellow);
-    painter.setPen(pen);
-    painter.drawText(x + 2, y - 8, tr("截图范围：( %1 x %2 ) - ( %3 x %4 )  图片大小：( %5 x %6 )")
-                     .arg(x).arg(y).arg(x + w).arg(y + h).arg(w).arg(h));
+    return fullScreen->copy(x2, y2, w2, h2);
 }
 
 void ScreenWidget::showEvent(QShowEvent *)
@@ -233,74 +244,41 @@ void ScreenWidget::showEvent(QShowEvent *)
     p.drawPixmap(0, 0, pix);
 }
 
-void ScreenWidget::saveScreen()
+void ScreenWidget::paintEvent(QPaintEvent *)
 {
-    int x = screen->getLeftUp().x();
-    int y = screen->getLeftUp().y();
-    int w = screen->getRightDown().x() - x;
-    int h = screen->getRightDown().y() - y;
+    QPen pen;
+    pen.setColor(Qt::green);
+    pen.setWidth(2);
+    pen.setStyle(Qt::DotLine);
 
-    QString fileName = QString("%1/screen_%2.png").arg(qApp->applicationDirPath()).arg(STRDATETIME);
-    fullScreen->copy(x, y, w, h).save(fileName, "png");
-    close();
+    QPainter painter(this);
+    painter.setPen(pen);
+    painter.drawPixmap(0, 0, *bgScreen);
+
+    int x, y, w, h, x2, y2;
+    QPixmap pix = this->getSelectPixmap(&x, &y, &w, &h, &x2, &y2);
+    painter.drawRect(x, y, w, h);
+    if (w > 1 && h > 1) {
+        painter.drawPixmap(x, y, pix);
+    }
+
+    int pixW = pix.width();
+    int pixH = pix.height();
+    pen.setColor(Qt::yellow);
+    painter.setPen(pen);
+    painter.drawText(x + 2, y - 8, QString("截图范围：( %1 x %2 ) - ( %3 x %4 )  图片大小：( %5 x %6 )")
+                     .arg(x2).arg(y2).arg(x2 + pixW).arg(y2 + pixH).arg(pixW).arg(pixH));
 }
 
-void ScreenWidget::saveFullScreen()
+void ScreenWidget::contextMenuEvent(QContextMenuEvent *)
 {
-    QString fileName = QString("%1/full_%2.png").arg(qApp->applicationDirPath()).arg(STRDATETIME);
-    fullScreen->save(fileName, "png");
-    close();
-}
-
-void ScreenWidget::saveScreenOther()
-{
-    QString name = QString("%1.png").arg(STRDATETIME);
-    QString fileName = QFileDialog::getSaveFileName(this, "保存图片", name, "png Files (*.png)");
-    if (!fileName.endsWith(".png")) {
-        fileName += ".png";
-    }
-
-    if (fileName.length() > 0) {
-        int x = screen->getLeftUp().x();
-        int y = screen->getLeftUp().y();
-        int w = screen->getRightDown().x() - x;
-        int h = screen->getRightDown().y() - y;
-        fullScreen->copy(x, y, w, h).save(fileName, "png");
-        close();
-    }
-}
-
-void ScreenWidget::saveFullOther()
-{
-    QString name = QString("%1.png").arg(STRDATETIME);
-    QString fileName = QFileDialog::getSaveFileName(this, "保存图片", name, "png Files (*.png)");
-    if (!fileName.endsWith(".png")) {
-        fileName += ".png";
-    }
-
-    if (fileName.length() > 0) {
-        fullScreen->save(fileName, "png");
-        close();
-    }
-}
-
-void ScreenWidget::mouseMoveEvent(QMouseEvent *e)
-{
-    if (screen->getStatus() == Screen::SELECT) {
-        screen->setEnd(e->pos());
-    } else if (screen->getStatus() == Screen::MOV) {
-        QPoint p(e->x() - movPos.x(), e->y() - movPos.y());
-        screen->move(p);
-        movPos = e->pos();
-    }
-
-    this->update();
+    this->setCursor(Qt::ArrowCursor);
+    menu->exec(cursor().pos());
 }
 
 void ScreenWidget::mousePressEvent(QMouseEvent *e)
 {
     int status = screen->getStatus();
-
     if (status == Screen::SELECT) {
         screen->setStart(e->pos());
     } else if (status == Screen::MOV) {
@@ -316,6 +294,19 @@ void ScreenWidget::mousePressEvent(QMouseEvent *e)
     this->update();
 }
 
+void ScreenWidget::mouseMoveEvent(QMouseEvent *e)
+{
+    if (screen->getStatus() == Screen::SELECT) {
+        screen->setEnd(e->pos());
+    } else if (screen->getStatus() == Screen::MOV) {
+        QPoint p(e->x() - movPos.x(), e->y() - movPos.y());
+        screen->move(p);
+        movPos = e->pos();
+    }
+
+    this->update();
+}
+
 void ScreenWidget::mouseReleaseEvent(QMouseEvent *)
 {
     if (screen->getStatus() == Screen::SELECT) {
@@ -325,8 +316,44 @@ void ScreenWidget::mouseReleaseEvent(QMouseEvent *)
     }
 }
 
-void ScreenWidget::contextMenuEvent(QContextMenuEvent *)
+void ScreenWidget::saveScreen()
 {
-    this->setCursor(Qt::ArrowCursor);
-    menu->exec(cursor().pos());
+    QString fileName = QString("%1/screen_%2.png").arg(qApp->applicationDirPath()).arg(STRDATETIME);
+    this->getSelectPixmap().save(fileName, "png");
+    this->close();
+}
+
+void ScreenWidget::saveFullScreen()
+{
+    QString fileName = QString("%1/full_%2.png").arg(qApp->applicationDirPath()).arg(STRDATETIME);
+    fullScreen->save(fileName, "png");
+    this->close();
+}
+
+void ScreenWidget::saveScreenOther()
+{
+    QString name = QString("%1.png").arg(STRDATETIME);
+    QString fileName = QFileDialog::getSaveFileName(this, "保存图片", name, "png Files (*.png)");
+    if (!fileName.endsWith(".png")) {
+        fileName += ".png";
+    }
+
+    if (!fileName.isEmpty()) {
+        this->getSelectPixmap().save(fileName, "png");
+        this->close();
+    }
+}
+
+void ScreenWidget::saveFullOther()
+{
+    QString name = QString("%1.png").arg(STRDATETIME);
+    QString fileName = QFileDialog::getSaveFileName(this, "保存图片", name, "png Files (*.png)");
+    if (!fileName.endsWith(".png")) {
+        fileName += ".png";
+    }
+
+    if (!fileName.isEmpty()) {
+        fullScreen->save(fileName, "png");
+        this->close();
+    }
 }

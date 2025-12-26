@@ -109,7 +109,7 @@ void VideoWindow::initFlowPanel()
     if (!fontDb.families().contains("iconfont")) {
         int fontId = fontDb.addApplicationFont(":/font/iconfont.ttf");
         QStringList fontName = fontDb.applicationFontFamilies(fontId);
-        if (fontName.size() == 0) {
+        if (fontName.count() == 0) {
             qDebug() << "load iconfont.ttf error";
         }
     }
@@ -124,7 +124,7 @@ void VideoWindow::initFlowPanel()
 #endif
 
     //循环添加顶部按钮
-    for (int i = 0; i < btns.size(); ++i) {
+    for (int i = 0; i < btns.count(); ++i) {
         QPushButton *btn = new QPushButton;
         //绑定按钮单击事件,用来发出信号通知
         connect(btn, SIGNAL(clicked(bool)), this, SLOT(btnClicked()));
@@ -179,11 +179,7 @@ void VideoWindow::resizeEvent(QResizeEvent *)
     //flowPanel->setGeometry(borderWidth, this->height() - height - borderWidth, this->width() - (borderWidth * 2), height);
 }
 
-#if (QT_VERSION >= QT_VERSION_CHECK(6,0,0))
-void VideoWindow::enterEvent(QEnterEvent *)
-#else
-void VideoWindow::enterEvent(QEvent *)
-#endif
+void VideoWindow::enterEvent(EnterEvent *)
 {
     //这里还可以增加一个判断,是否获取了焦点的才需要显示
     //if (this->hasFocus()) {}
@@ -214,7 +210,7 @@ void VideoWindow::dropEvent(QDropEvent *event)
     }
 
     if (!url.isEmpty()) {
-        emit fileDrag(url);
+        Q_EMIT fileDrag(url);
         this->restart(url);
     }
 }
@@ -601,7 +597,7 @@ void VideoWindow::checkVideo()
 void VideoWindow::btnClicked()
 {
     QPushButton *btn = (QPushButton *)sender();
-    emit btnClicked(btn->objectName());
+    Q_EMIT btnClicked(btn->objectName());
 }
 
 uint VideoWindow::getLength()
@@ -699,7 +695,7 @@ void VideoWindow::setSavePath(const QString &savePath)
     //如果目录不存在则新建
     QDir dir(savePath);
     if (!dir.exists()) {
-        dir.mkdir(savePath);
+        dir.mkpath(savePath);
     }
 }
 

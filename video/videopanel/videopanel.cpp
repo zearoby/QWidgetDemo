@@ -14,32 +14,7 @@ VideoPanel::VideoPanel(QWidget *parent) : QWidget(parent)
     this->initControl();
     this->initForm();
     this->initMenu();
-    QTimer::singleShot(1000, this, SLOT(play_video_all()));
-}
-
-bool VideoPanel::eventFilter(QObject *watched, QEvent *event)
-{
-    if (event->type() == QEvent::MouseButtonDblClick) {
-        QLabel *widget = (QLabel *) watched;
-        if (!videoMax) {
-            videoMax = true;
-            videoBox->hide_video_all();
-            gridLayout->addWidget(widget, 0, 0);
-            widget->setVisible(true);
-        } else {
-            videoMax = false;
-            videoBox->show_video_all();
-        }
-
-        widget->setFocus();
-    } else if (event->type() == QEvent::MouseButtonPress) {
-        QMouseEvent *mouseEvent = (QMouseEvent *)event;
-        if (mouseEvent->button() == Qt::RightButton) {
-            videoMenu->exec(QCursor::pos());
-        }
-    }
-
-    return QWidget::eventFilter(watched, event);
+    QTimer::singleShot(1000, this, SLOT(playAll()));
 }
 
 QSize VideoPanel::sizeHint() const
@@ -71,14 +46,12 @@ void VideoPanel::initForm()
     this->setStyleSheet(qss.join(""));
 #endif
 
-    videoMax = false;
     videoCount = 64;
-    videoType = "1_16";
+    layoutType = "1_16";
 
     for (int i = 0; i < videoCount; ++i) {
         QLabel *widget = new QLabel;
         widget->setObjectName(QString("video%1").arg(i + 1));
-        widget->installEventFilter(this);
         widget->setFocusPolicy(Qt::StrongFocus);
         widget->setAlignment(Qt::AlignCenter);
         widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -106,28 +79,26 @@ void VideoPanel::initMenu()
     videoMenu->addSeparator();
 
     //直接通过文字的形式添加子菜单
-    videoMenu->addAction("截图当前视频", this, SLOT(snapshot_video_one()));
-    videoMenu->addAction("截图所有视频", this, SLOT(snapshot_video_all()));
+    videoMenu->addAction("截图当前视频", this, SLOT(snapOne()));
+    videoMenu->addAction("截图所有视频", this, SLOT(snapAll()));
     videoMenu->addSeparator();
 
     //实例化通道布局类
     videoBox = new VideoBox(this);
-    QList<bool> enable;
-    enable << true << true << true << true << true << true << true << true << true;
-    videoBox->initMenu(videoMenu, enable);
-    videoBox->setVideoType(videoType);
+    videoBox->initMenu(videoMenu);
+    videoBox->setLayoutType(layoutType);
     videoBox->setLayout(gridLayout);
-    videoBox->setWidgets(widgets);
-    videoBox->show_video_all();
+    videoBox->setWidgets(widgets, widgets);
+    videoBox->show_all();
 }
 
 void VideoPanel::full()
 {
     if (actionFull->text() == "切换全屏模式") {
-        emit fullScreen(true);
+        Q_EMIT fullScreen(true);
         actionFull->setText("切换正常模式");
     } else {
-        emit fullScreen(false);
+        Q_EMIT fullScreen(false);
         actionFull->setText("切换全屏模式");
     }
 
@@ -145,17 +116,17 @@ void VideoPanel::poll()
     //执行轮询处理
 }
 
-void VideoPanel::play_video_all()
+void VideoPanel::playAll()
 {
 
 }
 
-void VideoPanel::snapshot_video_one()
+void VideoPanel::snapOne()
 {
 
 }
 
-void VideoPanel::snapshot_video_all()
+void VideoPanel::snapAll()
 {
 
 }

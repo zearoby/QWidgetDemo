@@ -42,17 +42,15 @@ private:
 
     QGridLayout *gridLayout;
     QVBoxLayout *verticalLayout;
+
     QLabel *labColor;
-    QLabel *label;
-    QLabel *labWeb;
     QLineEdit *txtWeb;
-    QLabel *labRgb;
     QLineEdit *txtRgb;
-    QLabel *labPoint;
     QLineEdit *txtPoint;
 
 private Q_SLOTS:
     void showColorValue();
+    void buttonClicked();
 };
 
 #endif // COLORWIDGET_H

@@ -35,18 +35,13 @@ void TrayIcon::iconIsActived(QSystemTrayIcon::ActivationReason reason)
     switch (reason) {
         case QSystemTrayIcon::Trigger:
         case QSystemTrayIcon::DoubleClick: {
-            mainWidget->showNormal();
+            this->showMainWidget();
             break;
         }
 
         default:
             break;
     }
-}
-
-bool TrayIcon::getVisible() const
-{
-    return trayIcon->isVisible();
 }
 
 void TrayIcon::setExitDirect(bool exitDirect)
@@ -59,7 +54,7 @@ void TrayIcon::setExitDirect(bool exitDirect)
 void TrayIcon::setMainWidget(QWidget *mainWidget)
 {
     this->mainWidget = mainWidget;
-    menu->addAction("主界面", mainWidget, SLOT(showNormal()));
+    menu->addAction("主界面", this, SLOT(showMainWidget()));
 
     if (exitDirect) {
         menu->addAction("退出", this, SLOT(closeAll()));
@@ -68,6 +63,14 @@ void TrayIcon::setMainWidget(QWidget *mainWidget)
     }
 
     trayIcon->setContextMenu(menu);
+}
+
+void TrayIcon::showMainWidget()
+{
+    if (mainWidget) {
+        mainWidget->showNormal();
+        mainWidget->activateWindow();
+    }
 }
 
 void TrayIcon::showMessage(const QString &title, const QString &msg, QSystemTrayIcon::MessageIcon icon, int msecs)
@@ -83,6 +86,11 @@ void TrayIcon::setIcon(const QString &strIcon)
 void TrayIcon::setToolTip(const QString &tip)
 {
     trayIcon->setToolTip(tip);
+}
+
+bool TrayIcon::getVisible() const
+{
+    return trayIcon->isVisible();
 }
 
 void TrayIcon::setVisible(bool visible)

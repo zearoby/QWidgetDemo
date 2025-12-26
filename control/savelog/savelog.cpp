@@ -105,7 +105,7 @@ SaveLog::SaveLog(QObject *parent) : QObject(parent)
     maxRow = currentRow = 0;
     maxSize = 128;
     toNet = false;
-    useContext = true;
+    useContext = false;
 
     //全局的文件对象,在需要的时候打开而不是每次添加日志都打开
     file = new QFile(this);
@@ -114,7 +114,7 @@ SaveLog::SaveLog(QObject *parent) : QObject(parent)
     //默认取应用程序可执行文件名称
     QString str = qApp->applicationFilePath();
     QStringList list = str.split("/");
-    name = list.at(list.size() - 1).split(".").at(0);
+    name = list.at(list.count() - 1).split(".").at(0);
     fileName = "";
 
     //默认所有类型都输出
@@ -123,7 +123,7 @@ SaveLog::SaveLog(QObject *parent) : QObject(parent)
 
 SaveLog::~SaveLog()
 {
-    file->close();
+    this->stop();
 }
 
 void SaveLog::openFile(const QString &fileName)
@@ -192,16 +192,24 @@ void SaveLog::clear()
     }
 }
 
+void SaveLog::clearContent()
+{
+    currentRow = 0;
+    if (file->isOpen()) {
+        file->resize(0);
+    }
+}
+
 void SaveLog::save(const QString &content)
 {
     //如果重定向输出到网络则通过网络发出去,否则输出到日志文件
     if (toNet) {
-        emit send(content);
+        Q_EMIT send(content);
     } else {
         //目录不存在则先新建目录
         QDir dir(path);
         if (!dir.exists()) {
-            dir.mkdir(path);
+            dir.mkpath(path);
         }
 
         //日志存储规则有多种策略 优先级 行数>大小>日期

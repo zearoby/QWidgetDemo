@@ -1,91 +1,95 @@
 
 ## 0 前言说明
-1. **项目作品：[https://blog.csdn.net/feiyangqingyun/article/details/97565652](https://blog.csdn.net/feiyangqingyun/article/details/97565652)**
-2. **网店地址：https://shop244026315.taobao.com/**
-3. **联系方式：QQ（517216493）微信（feiyangqingyun）推荐加微信。**
-4. **版本支持：所有项目已经全部支持Qt4/5/6所有版本以及后续版本。**
-5. 监控作品体验：[https://pan.baidu.com/s/1d7TH_GEYl5nOecuNlWJJ7g](https://pan.baidu.com/s/1d7TH_GEYl5nOecuNlWJJ7g) 提取码：01jf
-6. 其他作品体验：[https://pan.baidu.com/s/1ZxG-oyUKe286LPMPxOrO2A](https://pan.baidu.com/s/1ZxG-oyUKe286LPMPxOrO2A) 提取码：o05q
-7. 监控系统在线文档：[https://feiyangqingyun.gitee.io/QWidgetDemo/video_system/](https://feiyangqingyun.gitee.io/QWidgetDemo/video_system/)
-8. 大屏系统在线文档：[https://feiyangqingyun.gitee.io/QWidgetDemo/bigscreen/](https://feiyangqingyun.gitee.io/QWidgetDemo/bigscreen/)
-9. 物联网系统在线文档：[https://feiyangqingyun.gitee.io/QWidgetDemo/iotsystem/](https://feiyangqingyun.gitee.io/QWidgetDemo/iotsystem/)
+1. **项目作品：[https://qtchina.blog.csdn.net/article/details/97565652](https://qtchina.blog.csdn.net/article/details/97565652)**
+2. **视频主页：[https://space.bilibili.com/687803542](https://space.bilibili.com/687803542)**
+3. **网店地址：[https://shop244026315.taobao.com](https://shop244026315.taobao.com)**
+4. **联系方式：QQ（517216493）微信（feiyangqingyun）推荐加微信。**
+5. **公 众 号：Qt实战/Qt入门和进阶/Qt教程/Qt软件**
+6. **版本支持：所有项目已经全部支持Qt4/5/6所有版本以及后续版本。**
+7. 监控作品体验：[https://pan.baidu.com/s/1d7TH_GEYl5nOecuNlWJJ7g](https://pan.baidu.com/s/1d7TH_GEYl5nOecuNlWJJ7g) 提取码：01jf
+8. 其他作品体验：[https://pan.baidu.com/s/1ZxG-oyUKe286LPMPxOrO2A](https://pan.baidu.com/s/1ZxG-oyUKe286LPMPxOrO2A) 提取码：o05q
+9. 监控系统在线文档：[http://www.qtcdev.com/video_system/](http://www.qtcdev.com/video_system/)
+10. 大屏系统在线文档：[http://www.qtcdev.com/bigscreen/](http://www.qtcdev.com/bigscreen/)
+11. 物联网系统在线文档：[http://www.qtcdev.com/iotsystem/](http://www.qtcdev.com/iotsystem/)
 
 ## 1 特别说明
 1. 可以选择打开QWidgetDemo.pro一次性编译所有的，也可以到目录下打开pro编译。
 2. 如果发现有些子项目没有加载请打开对应目录下的.pro仔细看里面的注释。
 3. 编译好的可执行文件在源码同级目录下的bin目录。
-4. 亲测Qt4.6到Qt6.2所有版本，亲测win、linux、mac、uos等系统。
+4. 亲测Qt4.6到Qt6.6所有版本，亲测win、linux、mac、uos等系统。
 5. 有少部分项目不支持部分Qt版本比如Qt6，会自动跳过。
-6. **建议用git命令行下载，压缩包下载后重新解压文件可能会有问题，不知为何。**
+6. **建议用git命令行下载，压缩包下载后重新解压文件可能会有问题（提示Excess closing brace），不知为何。**
 8. **强烈推荐各位搭配Qt开发经验一起学习 [https://gitee.com/feiyangqingyun/qtkaifajingyan](https://gitee.com/feiyangqingyun/qtkaifajingyan)**
-9. **各位有需要购买Qt商业版可以联系Qt中国商务人员微信 zzwdkxx ，支持Qt。**
+9. 视频演示 [https://www.bilibili.com/video/BV1kg4y1P7VD](https://www.bilibili.com/video/BV1kg4y1P7VD)
+10. **各位有需要购买Qt商业版可以联系Qt中国商务人员微信 zzwdkxx ，支持Qt。**
 
 ## 2 目录说明
 **高质量项目加粗显示**
-| 目录      | 相关     | 名称                | 描述                        |
+|   目录    |   相关   |        名称         | 描述                        |
 | :-------: | :------: | :-----------------: | :-------------------------- |
-| control   | 控件相关 | battery             | **电池电量**                |
-| control   | 控件相关 | devicebutton        | **设备按钮**                |
-| control   | 控件相关 | devicesizetable     | 磁盘容量                    |
-| control   | 控件相关 | imageswitch         | 图片开关                    |
-| control   | 控件相关 | ipaddress           | IP地址输入框                |
-| control   | 控件相关 | lightbutton         | 高亮按钮                    |
-| control   | 控件相关 | navbutton           | **导航按钮**                |
-| control   | 控件相关 | savelog             | **日志重定向输出**          |
-| control   | 控件相关 | saveruntime         | **运行时间记录**            |
-| control   | 控件相关 | smoothcurve         | 平滑曲线                    |
-| control   | 控件相关 | zhtopy              | 汉字转拼音                  |
-| tool      | 工具相关 | comtool             | **串口调试助手**            |
-| tool      | 工具相关 | nettool             | **网络调试助手**            |
-| tool      | 工具相关 | netserver           | **网络中转服务器**          |
-| tool      | 工具相关 | base64helper        | **图片文字转base**          |
-| tool      | 工具相关 | countcode           | **代码行数统计工具**        |
-| tool      | 工具相关 | emailtool           | 邮件发送工具                |
-| tool      | 工具相关 | moneytool           | 存款利息计算器              |
-| tool      | 工具相关 | pngtool             | 图片警告去除工具            |
-| tool      | 工具相关 | keytool             | **秘钥生成器**              |
-| tool      | 工具相关 | keydemo             | 秘钥测试程序                |
-| tool      | 工具相关 | livetool            | 程序启动器                  |
-| tool      | 工具相关 | livedemo            | 程序启动示例                |
-| video     | 视频播放 | videobox            | **视频监控布局**            |
-| video     | 视频播放 | videopanel          | **视频监控面板**            |
-| video     | 视频播放 | videowindow         | 视频监控控件                |
-| video     | 视频播放 | playffmpeg          | 视频播放ffmpeg              |
-| video     | 视频播放 | playvlc             | 视频播放vlc                 |
-| video     | 视频播放 | plaympv             | 视频播放mpv                 |
-| widget    | 窗体相关 | colorwidget         | 颜色拾取器                  |
-| widget    | 窗体相关 | framelesswidget     | **通用无边框窗体**          |
-| widget    | 窗体相关 | gifwidget           | GIF录屏                     |
-| widget    | 窗体相关 | lunarcalendarwidget | **农历控件**                |
-| widget    | 窗体相关 | maskwidget          | 通用遮罩层                  |
-| widget    | 窗体相关 | movewidget          | 通用控件移动                |
-| widget    | 窗体相关 | screenwidget        | 屏幕截图                    |
-| ui        | 界面美化 | flatui              | 扁平化风格                  |
-| ui        | 界面美化 | styledemo           | **三套风格样式**            |
-| ui        | 界面美化 | uidemo01            | 界面美化基础示例            |
-| ui        | 界面美化 | uidemo08            | **界面美化入门示例**        |
-| ui        | 界面美化 | uidemo09            | 九宫格主界面                |
-| ui        | 界面美化 | uidemo10            | **扁平化主界面**            |
-| ui        | 界面美化 | iconhelper          | **超级图形字体**            |
-| other     | 其他相关 | bgdemo              | 异形窗体                    |
-| other     | 其他相关 | dbpage              | **通用数据库翻页**          |
-| other     | 其他相关 | echartgauge         | **echart图表js交互**        |
-| other     | 其他相关 | lineeditnext        | 文本框回车自动跳转          |
-| other     | 其他相关 | mouseline           | 鼠标十字线                  |
-| other     | 其他相关 | ntpclient           | NTP校时                     |
-| other     | 其他相关 | trayicon            | 通用托盘效果                |
-| other     | 其他相关 | multobj2slot        | 多对象共用槽                |
-| other     | 其他相关 | drawrect            | 随机大量矩形                |
-| third     | 第三方类 | designer            | QtDesigner设计师(Qt4)       |
-| third     | 第三方类 | hotkey              | 全局热键1                   |
-| third     | 第三方类 | shortcut            | 全局热键2                   |
-| third     | 第三方类 | miniblink           | **浏览器miniblink内核**     |
-| third     | 第三方类 | qwtdemo             | 无插件qwt示例               |
-| third     | 第三方类 | qcustomplotdemo     | **精美图表qcustomplot示例** |
-| netfriend | 网友提供 | astackwidget        | 动态StackWidget             |
-| netfriend | 网友提供 | imagecropper        | **头像设置工具**            |
-| netfriend | 网友提供 | imageviewwindow     | 图片3D效果切换              |
-| netfriend | 网友提供 | slidepuzzlewidget   | 滑块图片验证码              |
+|  control  | 控件相关 |       battery       | **电池电量**                |
+|  control  | 控件相关 |    devicebutton     | **设备按钮**                |
+|  control  | 控件相关 |   devicesizetable   | 磁盘容量                    |
+|  control  | 控件相关 |     imageswitch     | 图片开关                    |
+|  control  | 控件相关 |      ipaddress      | IP地址输入框                |
+|  control  | 控件相关 |     lightbutton     | 高亮按钮                    |
+|  control  | 控件相关 |      navbutton      | **导航按钮**                |
+|  control  | 控件相关 |       savelog       | **日志重定向输出**          |
+|  control  | 控件相关 |     saveruntime     | **运行时间记录**            |
+|  control  | 控件相关 |     smoothcurve     | 平滑曲线                    |
+|  control  | 控件相关 |       zhtopy        | 汉字转拼音                  |
+|  control  | 控件相关 |   cpumemorylabel    | CPU内存控件                 |
+|   tool    | 工具相关 |       comtool       | **串口调试助手**            |
+|   tool    | 工具相关 |       nettool       | **网络调试助手**            |
+|   tool    | 工具相关 |      netserver      | **网络中转服务器**          |
+|   tool    | 工具相关 |    base64helper     | **图片文字转base**          |
+|   tool    | 工具相关 |      countcode      | **代码行数统计工具**        |
+|   tool    | 工具相关 |      emailtool      | 邮件发送工具                |
+|   tool    | 工具相关 |      moneytool      | 存款利息计算器              |
+|   tool    | 工具相关 |       pngtool       | 图片警告去除工具            |
+|   tool    | 工具相关 |       keytool       | **秘钥生成器**              |
+|   tool    | 工具相关 |       keydemo       | 秘钥测试程序                |
+|   tool    | 工具相关 |      livetool       | 程序启动器                  |
+|   tool    | 工具相关 |      livedemo       | 程序启动示例                |
+|   video   | 视频播放 |      videobox       | **视频监控布局**            |
+|   video   | 视频播放 |     videopanel      | **视频监控面板**            |
+|   video   | 视频播放 |     videowindow     | 视频监控控件                |
+|   video   | 视频播放 |     playffmpeg      | 视频播放ffmpeg              |
+|   video   | 视频播放 |       playvlc       | 视频播放vlc                 |
+|   video   | 视频播放 |       plaympv       | 视频播放mpv                 |
+|  widget   | 窗体相关 |     colorwidget     | 颜色拾取器                  |
+|  widget   | 窗体相关 |   framelesswidget   | **通用无边框窗体**          |
+|  widget   | 窗体相关 |      gifwidget      | GIF录屏                     |
+|  widget   | 窗体相关 | lunarcalendarwidget | **农历控件**                |
+|  widget   | 窗体相关 |     maskwidget      | 通用遮罩层                  |
+|  widget   | 窗体相关 |     movewidget      | 通用控件移动                |
+|  widget   | 窗体相关 |    screenwidget     | 屏幕截图                    |
+|    ui     | 界面美化 |       flatui        | 扁平化风格                  |
+|    ui     | 界面美化 |      styledemo      | **三套风格样式**            |
+|    ui     | 界面美化 |      uidemo01       | 界面美化基础示例            |
+|    ui     | 界面美化 |      uidemo08       | **界面美化入门示例**        |
+|    ui     | 界面美化 |      uidemo09       | 九宫格主界面                |
+|    ui     | 界面美化 |      uidemo10       | **扁平化主界面**            |
+|    ui     | 界面美化 |     iconhelper      | **超级图形字体**            |
+|   other   | 其他相关 |       bgdemo        | 异形窗体                    |
+|   other   | 其他相关 |       dbpage        | **通用数据库翻页**          |
+|   other   | 其他相关 |     echartgauge     | **echart图表js交互**        |
+|   other   | 其他相关 |    lineeditnext     | 文本框回车自动跳转          |
+|   other   | 其他相关 |      mouseline      | 鼠标十字线                  |
+|   other   | 其他相关 |      ntpclient      | NTP校时                     |
+|   other   | 其他相关 |      trayicon       | 通用托盘效果                |
+|   other   | 其他相关 |    multobj2slot     | 多对象共用槽                |
+|   other   | 其他相关 |      drawrect       | 随机大量矩形                |
+|   third   | 第三方类 |      designer       | QtDesigner设计师(Qt4)       |
+|   third   | 第三方类 |       hotkey        | 全局热键1                   |
+|   third   | 第三方类 |      shortcut       | 全局热键2                   |
+|   third   | 第三方类 |      miniblink      | **浏览器miniblink内核**     |
+|   third   | 第三方类 |       qwtdemo       | 无插件qwt示例               |
+|   third   | 第三方类 |   qcustomplotdemo   | **精美图表qcustomplot示例** |
+| netfriend | 网友提供 |    astackwidget     | 动态StackWidget             |
+| netfriend | 网友提供 |    imagecropper     | **头像设置工具**            |
+| netfriend | 网友提供 |   imageviewwindow   | 图片3D效果切换              |
+| netfriend | 网友提供 |  slidepuzzlewidget  | 滑块图片验证码              |
 
 ## 3 效果图
 ### 3.1 控件相关-control
@@ -111,6 +115,8 @@
 ![](control/0snap/smoothcurve.jpg)
 - 汉字转拼音-zhtopy
 ![](control/0snap/zhtopy.jpg)
+- CPU内存控件-cpumemorylabel
+![](control/0snap/cpumemorylabel.jpg)
 
 ### 3.2 工具相关-tool
 - 串口调试助手-comtool
@@ -152,6 +158,8 @@
 ![](video/0snap/playvlc.jpg)
 - 视频播放mpv-plaympv
 ![](video/0snap/plaympv.jpg)
+- 视频播放mdk-playmdk
+![](video/0snap/playmdk.jpg)
 
 ### 3.4 窗体相关-widget
 - 颜色拾取器-colorwidget
@@ -237,7 +245,5 @@
 ![](netfriend/0snap/sliderpuzzlewidget.jpg)
 
 ## 4 学习群
-1. **Qt技术交流群1 46679801(已满员)**
-2. **Qt技术交流群2 573199610(未满员)**
-3. **Qt高级学习群 951393302(未满员，推荐此群)**
-4. **Qt交流大会群 853086607(已满员)**
+1. **Qt技术交流群1 573199610(已被封)**
+2. **Qt技术交流群2 751439350(新建群)**

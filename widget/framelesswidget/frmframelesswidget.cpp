@@ -7,11 +7,9 @@
 #include "qdebug.h"
 #include "framelesswidget2.h"
 
-#ifndef Q_CC_MSVC
 #include "framelessform/dialog.h"
 #include "framelessform/widget.h"
 #include "framelessform/mainwindow.h"
-#endif
 
 frmFramelessWidget::frmFramelessWidget(QWidget *parent) : QWidget(parent), ui(new Ui::frmFramelessWidget)
 {
@@ -75,6 +73,7 @@ void frmFramelessWidget::on_pushButton_clicked()
         frameless->setWidget(widget);
     }
 
+    //widget->resize(800, 600);
     widget->show();
 }
 

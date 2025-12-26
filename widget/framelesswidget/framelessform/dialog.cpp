@@ -1,5 +1,6 @@
 ﻿#include "dialog.h"
 #include "ui_dialog.h"
+#include "qdebug.h"
 
 #pragma execution_character_set("utf-8")
 Dialog::Dialog(QWidget *parent) : FramelessDialog(parent), ui(new Ui::Dialog)

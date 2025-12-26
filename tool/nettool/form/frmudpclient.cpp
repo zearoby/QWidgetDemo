@@ -1,7 +1,7 @@
 ﻿#include "frmudpclient.h"
 #include "ui_frmudpclient.h"
-#include "quihelper.h"
-#include "quihelperdata.h"
+#include "qthelper.h"
+#include "qthelperdata.h"
 
 frmUdpClient::frmUdpClient(QWidget *parent) : QWidget(parent), ui(new Ui::frmUdpClient)
 {
@@ -50,7 +50,7 @@ void frmUdpClient::initForm()
     //填充数据到下拉框
     ui->cboxInterval->addItems(AppData::Intervals);
     ui->cboxData->addItems(AppData::Datas);
-    AppData::loadIP(ui->cboxBindIP);
+    QtHelper::initLocalIPs(ui->cboxBindIP, AppConfig::UdpBindIP);
 }
 
 void frmUdpClient::initConfig()
@@ -126,48 +126,12 @@ void frmUdpClient::append(int type, const QString &data, bool clear)
 {
     static int currentCount = 0;
     static int maxCount = 100;
-
-    if (clear) {
-        ui->txtMain->clear();
-        currentCount = 0;
-        return;
-    }
-
-    if (currentCount >= maxCount) {
-        ui->txtMain->clear();
-        currentCount = 0;
-    }
-
-    if (ui->ckShow->isChecked()) {
-        return;
-    }
-
-    //过滤回车换行符
-    QString strData = data;
-    strData = strData.replace("\r", "");
-    strData = strData.replace("\n", "");
-
-    //不同类型不同颜色显示
-    QString strType;
-    if (type == 0) {
-        strType = "发送";
-        ui->txtMain->setTextColor(QColor("#22A3A9"));
-    } else if (type == 1) {
-        strType = "接收";
-        ui->txtMain->setTextColor(QColor("#753775"));
-    } else {
-        strType = "错误";
-        ui->txtMain->setTextColor(QColor("#D64D54"));
-    }
-
-    strData = QString("时间[%1] %2: %3").arg(TIMEMS).arg(strType).arg(strData);
-    ui->txtMain->append(strData);
-    currentCount++;
+    QtHelper::appendMsg(ui->txtMain, type, data, maxCount, currentCount, clear, ui->ckShow->isChecked());
 }
 
 void frmUdpClient::error()
 {
-    append(2, socket->errorString());
+    append(3, socket->errorString());
 }
 
 void frmUdpClient::readData()
@@ -182,9 +146,9 @@ void frmUdpClient::readData()
         socket->readDatagram(data.data(), data.size(), &host, &port);
 
         if (AppConfig::HexReceiveUdpClient) {
-            buffer = QUIHelperData::byteArrayToHexStr(data);
+            buffer = QtHelperData::byteArrayToHexStr(data);
         } else if (AppConfig::AsciiUdpClient) {
-            buffer = QUIHelperData::byteArrayToAsciiStr(data);
+            buffer = QtHelperData::byteArrayToAsciiStr(data);
         } else {
             buffer = QString(data);
         }
@@ -214,9 +178,9 @@ void frmUdpClient::sendData(const QString &ip, int port, const QString &data)
 {
     QByteArray buffer;
     if (AppConfig::HexSendUdpClient) {
-        buffer = QUIHelperData::hexStrToByteArray(data);
+        buffer = QtHelperData::hexStrToByteArray(data);
     } else if (AppConfig::AsciiUdpClient) {
-        buffer = QUIHelperData::asciiStrToByteArray(data);
+        buffer = QtHelperData::asciiStrToByteArray(data);
     } else {
         buffer = data.toUtf8();
     }

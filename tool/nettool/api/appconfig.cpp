@@ -1,5 +1,5 @@
 ﻿#include "appconfig.h"
-#include "quihelper.h"
+#include "qthelper.h"
 
 QString AppConfig::ConfigFile = "config.ini";
 int AppConfig::CurrentIndex = 0;
@@ -11,7 +11,7 @@ bool AppConfig::DebugTcpClient = false;
 bool AppConfig::AutoSendTcpClient = false;
 int AppConfig::IntervalTcpClient = 1000;
 QString AppConfig::TcpBindIP = "127.0.0.1";
-int AppConfig::TcpBindPort = 6001;
+int AppConfig::TcpBindPort = 0;
 QString AppConfig::TcpServerIP = "127.0.0.1";
 int AppConfig::TcpServerPort = 6000;
 
@@ -147,7 +147,7 @@ void AppConfig::readConfig()
     set.endGroup();
 
     //配置文件不存在或者不全则重新生成
-    if (!QUIHelper::checkIniFile(AppConfig::ConfigFile)) {
+    if (!QtHelper::checkIniFile(AppConfig::ConfigFile)) {
         writeConfig();
         return;
     }

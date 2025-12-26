@@ -92,7 +92,7 @@ void NtpClient::readData()
     dateTime.setTime_t(secs);
 #endif
 
-#ifdef __arm__
+#if defined(__arm__) || defined(__aarch64__)
 #ifdef arma9
     dateTime = dateTime.addSecs(8 * 60 * 60);
 #endif
@@ -101,7 +101,7 @@ void NtpClient::readData()
 
     //有些时候返回的数据可能有误或者解析不正确,导致填充的时间不正确
     if (dateTime.isValid()) {
-        emit receiveTime(dateTime);
+        Q_EMIT receiveTime(dateTime);
     }
 }
 

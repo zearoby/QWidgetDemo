@@ -5,6 +5,7 @@
 #include "qgridlayout.h"
 #include "qlabel.h"
 #include "qlineedit.h"
+#include "qpushbutton.h"
 #include "qapplication.h"
 #include "qtimer.h"
 #include "qevent.h"
@@ -65,40 +66,47 @@ ColorWidget::ColorWidget(QWidget *parent) : QWidget(parent)
 
     verticalLayout->addWidget(labColor);
 
-    label = new QLabel(this);
-    label->setMinimumSize(QSize(0, 18));
-    label->setStyleSheet("background-color: rgb(0, 0, 0);color: rgb(200, 200, 200);");
-    label->setAlignment(Qt::AlignCenter);
+    QLabel *labName = new QLabel(this);
+    labName->setMinimumSize(QSize(0, 18));
+    labName->setStyleSheet("background-color: rgb(0, 0, 0);color: rgb(200, 200, 200);");
+    labName->setAlignment(Qt::AlignCenter);
 
-    verticalLayout->addWidget(label);
+    verticalLayout->addWidget(labName);
     gridLayout->addLayout(verticalLayout, 0, 0, 3, 1);
 
-    labWeb = new QLabel(this);
+    QLabel *labWeb = new QLabel(this);
     gridLayout->addWidget(labWeb, 0, 1, 1, 1);
 
     txtWeb = new QLineEdit(this);
     gridLayout->addWidget(txtWeb, 0, 2, 1, 1);
 
-    labRgb = new QLabel(this);
+    QLabel *labRgb = new QLabel(this);
     gridLayout->addWidget(labRgb, 1, 1, 1, 1);
 
     txtRgb = new QLineEdit(this);
     gridLayout->addWidget(txtRgb, 1, 2, 1, 1);
 
-    labPoint = new QLabel(this);
+    QLabel *labPoint = new QLabel(this);
     gridLayout->addWidget(labPoint, 2, 1, 1, 1);
 
     txtPoint = new QLineEdit(this);
     gridLayout->addWidget(txtPoint, 2, 2, 1, 1);
 
-    label->setText("当前颜色");
+    //底部增加按钮
+    QPushButton *btn = new QPushButton;
+    connect(btn, SIGNAL(clicked(bool)), this, SLOT(buttonClicked()));
+    btn->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    btn->setText("开始拾色");
+    gridLayout->addWidget(btn, 0, 3, 3, 1);
+
+    labName->setText("当前颜色");
     labWeb->setText("web值:");
     labRgb->setText("rgb值:");
     labPoint->setText("坐标值:");
 
     this->setLayout(gridLayout);
     this->setWindowTitle("屏幕拾色器");
-    this->setFixedSize(300, 108);
+    this->setFixedSize(400, 108);
 
     cp = QApplication::clipboard();
     pressed = false;
@@ -171,4 +179,16 @@ void ColorWidget::showColorValue()
     labColor->setStyleSheet(str);
     txtRgb->setText(strDecimalValue);
     txtWeb->setText(strHex);
+}
+
+void ColorWidget::buttonClicked()
+{
+    QPushButton *btn = (QPushButton *)sender();
+    if (btn->text() == "开始拾色") {
+        btn->setText("停止拾色");
+        pressed = true;
+    } else {
+        btn->setText("开始拾色");
+        pressed = false;
+    }
 }

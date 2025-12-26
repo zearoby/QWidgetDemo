@@ -88,60 +88,35 @@ void DeviceButton::paintEvent(QPaintEvent *)
 bool DeviceButton::eventFilter(QObject *watched, QEvent *event)
 {
     //识别鼠标 按下+移动+松开+双击 等事件
+    int type = event->type();
     QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
-    if (event->type() == QEvent::MouseButtonPress) {
+    if (type == QEvent::MouseButtonPress) {
         //限定鼠标左键
         if (mouseEvent->button() == Qt::LeftButton) {
             lastPoint = mouseEvent->pos();
             isPressed = true;
-            emit clicked();
+            Q_EMIT clicked();
             return true;
         }
-    } else if (event->type() == QEvent::MouseMove) {
+    } else if (type == QEvent::MouseMove) {
         //允许拖动并且鼠标按下准备拖动
         if (canMove && isPressed) {
             int dx = mouseEvent->pos().x() - lastPoint.x();
             int dy = mouseEvent->pos().y() - lastPoint.y();
-            this->move(this->x() + dx, this->y() + dy);
+            this->move(this->x() + dx, this->y() + dy);            
             return true;
         }
-    } else if (event->type() == QEvent::MouseButtonRelease) {
+    } else if (type == QEvent::MouseButtonRelease) {
         isPressed = false;
-    } else if (event->type() == QEvent::MouseButtonDblClick) {
-        emit doubleClicked();
+        //增加刷新父窗体/防止残影
+        if (this->parent()) {
+            QMetaObject::invokeMethod(this->parent(), "update");
+        }
+    } else if (type == QEvent::MouseButtonDblClick) {
+        Q_EMIT doubleClicked();
     }
 
     return QWidget::eventFilter(watched, event);
-}
-
-bool DeviceButton::getCanMove() const
-{
-    return this->canMove;
-}
-
-QString DeviceButton::getText() const
-{
-    return this->text;
-}
-
-QString DeviceButton::getColorNormal() const
-{
-    return this->colorNormal;
-}
-
-QString DeviceButton::getColorAlarm() const
-{
-    return this->colorAlarm;
-}
-
-DeviceButton::ButtonStyle DeviceButton::getButtonStyle() const
-{
-    return this->buttonStyle;
-}
-
-DeviceButton::ButtonColor DeviceButton::getButtonColor() const
-{
-    return this->buttonColor;
 }
 
 QSize DeviceButton::sizeHint() const
@@ -166,9 +141,19 @@ void DeviceButton::checkAlarm()
     this->update();
 }
 
+bool DeviceButton::getCanMove() const
+{
+    return this->canMove;
+}
+
 void DeviceButton::setCanMove(bool canMove)
 {
     this->canMove = canMove;
+}
+
+QString DeviceButton::getText() const
+{
+    return this->text;
 }
 
 void DeviceButton::setText(const QString &text)
@@ -179,6 +164,11 @@ void DeviceButton::setText(const QString &text)
     }
 }
 
+QString DeviceButton::getColorNormal() const
+{
+    return this->colorNormal;
+}
+
 void DeviceButton::setColorNormal(const QString &colorNormal)
 {
     if (this->colorNormal != colorNormal) {
@@ -187,12 +177,22 @@ void DeviceButton::setColorNormal(const QString &colorNormal)
     }
 }
 
+QString DeviceButton::getColorAlarm() const
+{
+    return this->colorAlarm;
+}
+
 void DeviceButton::setColorAlarm(const QString &colorAlarm)
 {
     if (this->colorAlarm != colorAlarm) {
         this->colorAlarm = colorAlarm;
         this->update();
     }
+}
+
+DeviceButton::ButtonStyle DeviceButton::getButtonStyle() const
+{
+    return this->buttonStyle;
 }
 
 void DeviceButton::setButtonStyle(const DeviceButton::ButtonStyle &buttonStyle)
@@ -215,6 +215,11 @@ void DeviceButton::setButtonStyle(const DeviceButton::ButtonStyle &buttonStyle)
     }
 
     setButtonColor(buttonColor);
+}
+
+DeviceButton::ButtonColor DeviceButton::getButtonColor() const
+{
+    return this->buttonColor;
 }
 
 void DeviceButton::setButtonColor(const DeviceButton::ButtonColor &buttonColor)

@@ -89,6 +89,8 @@ public Q_SLOTS:
 
     //清空状态
     void clear();
+    //清空内容
+    void clearContent();
     //保存日志
     void save(const QString &content);
 

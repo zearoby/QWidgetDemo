@@ -27,6 +27,7 @@ LightButton::LightButton(QWidget *parent) : QWidget(parent)
     overlayColor = QColor(255, 255, 255);
 
     canMove = false;
+    pressed = false;
     this->installEventFilter(this);
 
     isAlarm = false;
@@ -37,23 +38,22 @@ LightButton::LightButton(QWidget *parent) : QWidget(parent)
 
 bool LightButton::eventFilter(QObject *watched, QEvent *event)
 {
-    if (canMove) {
-        static QPoint lastPoint;
-        static bool pressed = false;
-        QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
-
-        if (mouseEvent->type() == QEvent::MouseButtonPress) {
-            if (this->rect().contains(mouseEvent->pos()) && (mouseEvent->button() == Qt::LeftButton)) {
-                lastPoint = mouseEvent->pos();
-                pressed = true;
-            }
-        } else if (mouseEvent->type() == QEvent::MouseMove && pressed) {
+    int type = event->type();
+    QMouseEvent *mouseEvent = (QMouseEvent *)event;
+    if (type == QEvent::MouseButtonPress) {
+        if (this->rect().contains(mouseEvent->pos()) && (mouseEvent->button() == Qt::LeftButton)) {
+            lastPoint = mouseEvent->pos();
+            pressed = true;
+        }
+    } else if (type == QEvent::MouseMove && pressed) {
+        if (canMove) {
             int dx = mouseEvent->pos().x() - lastPoint.x();
             int dy = mouseEvent->pos().y() - lastPoint.y();
             this->move(this->x() + dx, this->y() + dy);
-        } else if (mouseEvent->type() == QEvent::MouseButtonRelease && pressed) {
-            pressed = false;
         }
+    } else if (type == QEvent::MouseButtonRelease && pressed) {
+        pressed = false;
+        Q_EMIT clicked();
     }
 
     return QWidget::eventFilter(watched, event);
@@ -186,71 +186,6 @@ void LightButton::drawOverlay(QPainter *painter)
     painter->restore();
 }
 
-QString LightButton::getText() const
-{
-    return this->text;
-}
-
-QColor LightButton::getTextColor() const
-{
-    return this->textColor;
-}
-
-QColor LightButton::getAlarmColor() const
-{
-    return this->alarmColor;
-}
-
-QColor LightButton::getNormalColor() const
-{
-    return this->normalColor;
-}
-
-QColor LightButton::getBorderOutColorStart() const
-{
-    return this->borderOutColorStart;
-}
-
-QColor LightButton::getBorderOutColorEnd() const
-{
-    return this->borderOutColorEnd;
-}
-
-QColor LightButton::getBorderInColorStart() const
-{
-    return this->borderInColorStart;
-}
-
-QColor LightButton::getBorderInColorEnd() const
-{
-    return this->borderInColorEnd;
-}
-
-QColor LightButton::getBgColor() const
-{
-    return this->bgColor;
-}
-
-bool LightButton::getCanMove() const
-{
-    return this->canMove;
-}
-
-bool LightButton::getShowRect() const
-{
-    return this->showRect;
-}
-
-bool LightButton::getShowOverlay() const
-{
-    return this->showOverlay;
-}
-
-QColor LightButton::getOverlayColor() const
-{
-    return this->overlayColor;
-}
-
 QSize LightButton::sizeHint() const
 {
     return QSize(100, 100);
@@ -261,12 +196,22 @@ QSize LightButton::minimumSizeHint() const
     return QSize(10, 10);
 }
 
+QString LightButton::getText() const
+{
+    return this->text;
+}
+
 void LightButton::setText(const QString &text)
 {
     if (this->text != text) {
         this->text = text;
         this->update();
     }
+}
+
+QColor LightButton::getTextColor() const
+{
+    return this->textColor;
 }
 
 void LightButton::setTextColor(const QColor &textColor)
@@ -277,12 +222,22 @@ void LightButton::setTextColor(const QColor &textColor)
     }
 }
 
+QColor LightButton::getAlarmColor() const
+{
+    return this->alarmColor;
+}
+
 void LightButton::setAlarmColor(const QColor &alarmColor)
 {
     if (this->alarmColor != alarmColor) {
         this->alarmColor = alarmColor;
         this->update();
     }
+}
+
+QColor LightButton::getNormalColor() const
+{
+    return this->normalColor;
 }
 
 void LightButton::setNormalColor(const QColor &normalColor)
@@ -293,12 +248,22 @@ void LightButton::setNormalColor(const QColor &normalColor)
     }
 }
 
+QColor LightButton::getBorderOutColorStart() const
+{
+    return this->borderOutColorStart;
+}
+
 void LightButton::setBorderOutColorStart(const QColor &borderOutColorStart)
 {
     if (this->borderOutColorStart != borderOutColorStart) {
         this->borderOutColorStart = borderOutColorStart;
         this->update();
     }
+}
+
+QColor LightButton::getBorderOutColorEnd() const
+{
+    return this->borderOutColorEnd;
 }
 
 void LightButton::setBorderOutColorEnd(const QColor &borderOutColorEnd)
@@ -309,12 +274,22 @@ void LightButton::setBorderOutColorEnd(const QColor &borderOutColorEnd)
     }
 }
 
+QColor LightButton::getBorderInColorStart() const
+{
+    return this->borderInColorStart;
+}
+
 void LightButton::setBorderInColorStart(const QColor &borderInColorStart)
 {
     if (this->borderInColorStart != borderInColorStart) {
         this->borderInColorStart = borderInColorStart;
         this->update();
     }
+}
+
+QColor LightButton::getBorderInColorEnd() const
+{
+    return this->borderInColorEnd;
 }
 
 void LightButton::setBorderInColorEnd(const QColor &borderInColorEnd)
@@ -325,12 +300,22 @@ void LightButton::setBorderInColorEnd(const QColor &borderInColorEnd)
     }
 }
 
+QColor LightButton::getBgColor() const
+{
+    return this->bgColor;
+}
+
 void LightButton::setBgColor(const QColor &bgColor)
 {
     if (this->bgColor != bgColor) {
         this->bgColor = bgColor;
         this->update();
     }
+}
+
+bool LightButton::getCanMove() const
+{
+    return this->canMove;
 }
 
 void LightButton::setCanMove(bool canMove)
@@ -341,6 +326,11 @@ void LightButton::setCanMove(bool canMove)
     }
 }
 
+bool LightButton::getShowRect() const
+{
+    return this->showRect;
+}
+
 void LightButton::setShowRect(bool showRect)
 {
     if (this->showRect != showRect) {
@@ -349,12 +339,22 @@ void LightButton::setShowRect(bool showRect)
     }
 }
 
+bool LightButton::getShowOverlay() const
+{
+    return this->showOverlay;
+}
+
 void LightButton::setShowOverlay(bool showOverlay)
 {
     if (this->showOverlay != showOverlay) {
         this->showOverlay = showOverlay;
         this->update();
     }
+}
+
+QColor LightButton::getOverlayColor() const
+{
+    return this->overlayColor;
 }
 
 void LightButton::setOverlayColor(const QColor &overlayColor)

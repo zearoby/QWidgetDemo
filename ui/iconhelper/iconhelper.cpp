@@ -132,11 +132,13 @@ void IconHelper::setStyle(QWidget *widget, QList<QAbstractButton *> btns,
 IconHelper::IconHelper(const QString &fontFile, const QString &fontName, QObject *parent) : QObject(parent)
 {
     //判断图形字体是否存在,不存在则加入
+    //这里暂时限制在同一个项目中只加载一次字体文件
     QFontDatabase fontDb;
-    if (!fontDb.families().contains(fontName) && QFile(fontFile).exists()) {
+    bool exist = false;//fontDb.families().contains(fontName);
+    if (!exist && QFile(fontFile).exists()) {
         int fontId = fontDb.addApplicationFont(fontFile);
         QStringList listName = fontDb.applicationFontFamilies(fontId);
-        if (listName.size() == 0) {
+        if (listName.count() == 0) {
             qDebug() << QString("load %1 error").arg(fontName);
         }
     }
@@ -158,26 +160,27 @@ bool IconHelper::eventFilter(QObject *watched, QEvent *event)
         int index = btns.indexOf(btn);
         if (index >= 0) {
             //不同的事件设置不同的图标,同时区分选中的和没有选中的
+            int type = event->type();
             if (btn->isChecked()) {
-                if (event->type() == QEvent::MouseButtonPress) {
+                if (type == QEvent::MouseButtonPress) {
                     QMouseEvent *mouseEvent = (QMouseEvent *)event;
                     if (mouseEvent->button() == Qt::LeftButton) {
                         btn->setIcon(QIcon(pixChecked.at(index)));
                     }
-                } else if (event->type() == QEvent::Enter) {
+                } else if (type == QEvent::Enter) {
                     btn->setIcon(QIcon(pixChecked.at(index)));
-                } else if (event->type() == QEvent::Leave) {
+                } else if (type == QEvent::Leave) {
                     btn->setIcon(QIcon(pixChecked.at(index)));
                 }
             } else {
-                if (event->type() == QEvent::MouseButtonPress) {
+                if (type == QEvent::MouseButtonPress) {
                     QMouseEvent *mouseEvent = (QMouseEvent *)event;
                     if (mouseEvent->button() == Qt::LeftButton) {
                         btn->setIcon(QIcon(pixPressed.at(index)));
                     }
-                } else if (event->type() == QEvent::Enter) {
+                } else if (type == QEvent::Enter) {
                     btn->setIcon(QIcon(pixHover.at(index)));
-                } else if (event->type() == QEvent::Leave) {
+                } else if (type == QEvent::Leave) {
                     btn->setIcon(QIcon(pixNormal.at(index)));
                 }
             }
@@ -265,13 +268,15 @@ void IconHelper::setStyle1(QWidget *widget, QList<QToolButton *> btns, QList<int
 
 void IconHelper::setStyle1(QWidget *widget, QList<QAbstractButton *> btns, QList<int> icons, const IconHelper::StyleColor &styleColor)
 {
-    int btnCount = btns.size();
-    int iconCount = icons.size();
+    int btnCount = btns.count();
+    int iconCount = icons.count();
     if (btnCount <= 0 || iconCount <= 0 || btnCount != iconCount) {
         return;
     }
 
     QString position = styleColor.position;
+    quint32 btnWidth = styleColor.btnWidth;
+    quint32 btnHeight = styleColor.btnHeight;
     quint32 iconSize = styleColor.iconSize;
     quint32 iconWidth = styleColor.iconWidth;
     quint32 iconHeight = styleColor.iconHeight;
@@ -324,12 +329,20 @@ void IconHelper::setStyle1(QWidget *widget, QList<QAbstractButton *> btns, QList
     qss << QString("QWidget>QAbstractButton:checked{background-color:%1;color:%2;}")
         .arg(styleColor.checkedBgColor).arg(styleColor.checkedTextColor);
 
+    //按钮宽度高度
+    if (btnWidth > 0) {
+        qss << QString("QWidget>QAbstractButton{min-width:%1px;}").arg(btnWidth);
+    }
+    if (btnHeight > 0) {
+        qss << QString("QWidget>QAbstractButton{min-height:%1px;}").arg(btnHeight);
+    }
+
     //设置样式表
     widget->setStyleSheet(qss.join(""));
 
     //可能会重复调用设置所以先要移除上一次的
     for (int i = 0; i < btnCount; ++i) {
-        for (int j = 0; j < this->btns.size(); j++) {
+        for (int j = 0; j < this->btns.count(); j++) {
             if (this->btns.at(j) == btns.at(i)) {
                 disconnect(btns.at(i), SIGNAL(toggled(bool)), this, SLOT(toggled(bool)));
                 this->btns.at(j)->removeEventFilter(this);

@@ -69,19 +69,29 @@ public:
 
 private:
     static QScopedPointer<ScreenWidget> self;
-    QMenu *menu;            //右键菜单对象
-    Screen *screen;         //截屏对象
-    QPixmap *fullScreen;    //保存全屏图像
-    QPixmap *bgScreen;      //模糊背景图
-    QPoint movPos;          //坐标
+
+    //右键菜单
+    QMenu *menu;
+    //截屏对象
+    Screen *screen;
+    //全屏图像
+    QPixmap *fullScreen;
+    //模糊背景
+    QPixmap *bgScreen;
+    //移动坐标
+    QPoint movPos;
+
+    //获取选中图像
+    QPixmap getSelectPixmap(int *rectX = NULL, int *rectY = NULL, int *rectW = NULL, int *rectH = NULL, int *pixX = NULL, int *pixY = NULL);
 
 protected:
+    void showEvent(QShowEvent *);
+    void paintEvent(QPaintEvent *);
     void contextMenuEvent(QContextMenuEvent *);
+
     void mousePressEvent(QMouseEvent *);
     void mouseMoveEvent(QMouseEvent *);
     void mouseReleaseEvent(QMouseEvent *);
-    void paintEvent(QPaintEvent *);
-    void showEvent(QShowEvent *);
 
 private slots:
     void saveScreen();

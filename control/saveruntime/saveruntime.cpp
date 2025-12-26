@@ -28,7 +28,7 @@ SaveRunTime::SaveRunTime(QObject *parent) : QObject(parent)
     path = qApp->applicationDirPath();
     QString str = qApp->applicationFilePath();
     QStringList list = str.split("/");
-    name = list.at(list.size() - 1).split(".").at(0);
+    name = list.at(list.count() - 1).split(".").at(0);
 
     saveInterval = 1 * 60 * 1000;
     startTime = QDateTime::currentDateTime();
@@ -39,31 +39,17 @@ SaveRunTime::SaveRunTime(QObject *parent) : QObject(parent)
     connect(timerSave, SIGNAL(timeout()), this, SLOT(saveLog()));
 }
 
+SaveRunTime::~SaveRunTime()
+{
+    this->stop();
+}
+
 void SaveRunTime::getDiffValue(const QDateTime &startTime, const QDateTime &endTime, int &day, int &hour, int &minute)
 {
-    qint64 sec = startTime.secsTo(endTime);
-    day = hour = minute = 0;
-    int seconds = 0;
-
-    while (sec > 0) {
-        seconds++;
-        if (seconds == 60) {
-            minute++;
-            seconds = 0;
-        }
-
-        if (minute == 60) {
-            hour++;
-            minute = 0;
-        }
-
-        if (hour == 24) {
-            day++;
-            hour = 0;
-        }
-
-        sec--;
-    }
+    qint64 totalSeconds = startTime.secsTo(endTime);
+    minute = (totalSeconds / 60) % 60;
+    hour = totalSeconds / 3600;
+    day = totalSeconds / (24 * 3600);
 }
 
 void SaveRunTime::start()
@@ -96,7 +82,7 @@ void SaveRunTime::newPath()
     //检查目录是否存在,不存在则先新建
     QDir dir(path);
     if (!dir.exists()) {
-        dir.mkdir(path);
+        dir.mkpath(path);
     }
 }
 
@@ -187,7 +173,7 @@ void SaveRunTime::saveLog()
         //重新清空文件
         file.resize(0);
         //如果行数小于2则返回
-        if (content.size() < 2) {
+        if (content.count() < 2) {
             file.close();
             return;
         }
@@ -206,7 +192,7 @@ void SaveRunTime::saveLog()
         lastLine = list.join("\t");
 
         //重新替换最后一行并写入新的数据
-        content[content.size() - 1] = lastLine;
+        content[content.count() - 1] = lastLine;
 
         QTextStream stream(&file);
         stream << content.join("") << "\n";

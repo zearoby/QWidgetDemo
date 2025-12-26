@@ -1,5 +1,5 @@
 ﻿#include "appdata.h"
-#include "quihelper.h"
+#include "qthelper.h"
 
 QStringList AppData::Intervals = QStringList();
 QStringList AppData::Datas = QStringList();
@@ -11,7 +11,7 @@ void AppData::readSendData()
 {
     //读取发送数据列表
     AppData::Datas.clear();
-    QString fileName = QString("%1/%2").arg(QUIHelper::appPath()).arg(AppData::SendFileName);
+    QString fileName = QString("%1/%2").arg(QtHelper::appPath()).arg(AppData::SendFileName);
     QFile file(fileName);
     if (file.size() > 0 && file.open(QFile::ReadOnly | QIODevice::Text)) {
         while (!file.atEnd()) {
@@ -39,7 +39,7 @@ void AppData::readDeviceData()
     //读取转发数据列表
     AppData::Keys.clear();
     AppData::Values.clear();
-    QString fileName = QString("%1/%2").arg(QUIHelper::appPath()).arg(AppData::DeviceFileName);
+    QString fileName = QString("%1/%2").arg(QtHelper::appPath()).arg(AppData::DeviceFileName);
     QFile file(fileName);
     if (file.size() > 0 && file.open(QFile::ReadOnly | QIODevice::Text)) {
         while (!file.atEnd()) {
@@ -72,51 +72,10 @@ void AppData::saveData(const QString &data)
         return;
     }
 
-    QString fileName = QString("%1/%2.txt").arg(QUIHelper::appPath()).arg(STRDATETIME);
+    QString fileName = QString("%1/%2.txt").arg(QtHelper::appPath()).arg(STRDATETIME);
     QFile file(fileName);
     if (file.open(QFile::WriteOnly | QFile::Text)) {
         file.write(data.toUtf8());
         file.close();
-    }
-}
-
-void AppData::loadIP(QComboBox *cbox)
-{
-    //获取本机所有IP
-    static QStringList ips;
-    if (ips.count() == 0) {
-#ifdef Q_OS_WASM
-        ips << "127.0.0.1";
-#else
-        QList<QNetworkInterface> netInterfaces = QNetworkInterface::allInterfaces();
-        foreach (const QNetworkInterface  &netInterface, netInterfaces) {
-            //移除虚拟机和抓包工具的虚拟网卡
-            QString humanReadableName = netInterface.humanReadableName().toLower();
-            if (humanReadableName.startsWith("vmware network adapter") || humanReadableName.startsWith("npcap loopback adapter")) {
-                continue;
-            }
-
-            //过滤当前网络接口
-            bool flag = (netInterface.flags() == (QNetworkInterface::IsUp | QNetworkInterface::IsRunning | QNetworkInterface::CanBroadcast | QNetworkInterface::CanMulticast));
-            if (flag) {
-                QList<QNetworkAddressEntry> addrs = netInterface.addressEntries();
-                foreach (QNetworkAddressEntry addr, addrs) {
-                    //只取出IPV4的地址
-                    if (addr.ip().protocol() == QAbstractSocket::IPv4Protocol) {
-                        QString ip4 = addr.ip().toString();
-                        if (ip4 != "127.0.0.1") {
-                            ips << ip4;
-                        }
-                    }
-                }
-            }
-        }
-#endif
-    }
-
-    cbox->clear();
-    cbox->addItems(ips);
-    if (!ips.contains("127.0.0.1")) {
-        cbox->addItem("127.0.0.1");
     }
 }
